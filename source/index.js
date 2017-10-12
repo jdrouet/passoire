@@ -21,11 +21,8 @@ class Schema {
   cleanField(view, field, key, value) {
     const canSeeField = !view || !field.views || field.views.includes(view);
     if (!canSeeField) return {};
-    if (field.array) {
-      if (!Array.isArray(value)) return {[key]: []};
-      if (field.schema) {
-        return {[key]: value.map((item) => field.schema.clean(item, view))};
-      }
+    if (field.array && !Array.isArray(value)) {
+      return {[key]: []};
     }
     if (typeof value === 'undefined') {
       return {[key]: null};
@@ -44,6 +41,9 @@ class Schema {
    * @return {object} the cleaned object
    */
   clean(input, view) {
+    if (Array.isArray(input)) {
+      return input.map((item) => this.clean(item, view));
+    }
     return Object.keys(this.definition).reduce((result, key) => {
       const field = this.definition[key];
       const value = input[key];

@@ -56,4 +56,34 @@ describe('clean', () => {
       ],
     });
   });
+
+  it('should work with an array', () => {
+    expect(Account.clean([
+      {
+        id: 1,
+        password: 'password',
+        publicThings: [{id: 4}, {id: 5}],
+      },
+      {
+        id: 2,
+        password: 'password',
+        publicThings: [{id: 6}, {id: 7}],
+      },
+    ], 'public')).to.eql([
+      {
+        id: 1,
+        publicThings: [
+          {id: 4, data: [], subthings: []},
+          {id: 5, data: [], subthings: []},
+        ],
+      },
+      {
+        id: 2,
+        publicThings: [
+          {id: 6, data: [], subthings: []},
+          {id: 7, data: [], subthings: []},
+        ],
+      },
+    ]);
+  });
 });
