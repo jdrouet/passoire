@@ -16,11 +16,11 @@ const Tag = new Schema({
 
 const Account = new Schema({
   id: {},
-  password: { views: [] },
-  firstName: { views: ['public', 'user', 'admin'] },
-  lastName: { views: ['user', 'admin'] },
-  email: { views: ['user', 'admin'] },
-  tags: { array: true, schema: Tag, views: ['user', 'admin'] }
+  password: {views: []},
+  firstName: {views: ['public', 'user', 'admin']},
+  lastName: {views: ['user', 'admin']},
+  email: {views: ['user', 'admin']},
+  tags: {array: true, schema: Tag, views: ['user', 'admin']},
 });
 
 const account = {
@@ -30,15 +30,22 @@ const account = {
   lastName: 'Luc',
   email: 'jean-luc@gmail.com',
   tags: [
-    { id: 1, label: 'french' },
-    { id: 2, label: 'rider' },
+    {id: 1, label: 'french'},
+    {id: 2, label: 'rider'},
   ],
 };
 
-// Works with a single element
 console.log(Account.clean(account));
-
-// Works with an array of elements
-console.log(Account.clean([account]));
+console.log(Account.clean(account, 'public'));
 ```
 
+Will output
+```node
+{ id: 1,
+  password: 'such a funny password',
+  firstName: 'Jean',
+  lastName: 'Luc',
+  email: 'jean-luc@gmail.com',
+  tags: [ { id: 1, label: 'french' }, { id: 2, label: 'rider' } ] }
+{ id: 1, firstName: 'Jean' }
+```
