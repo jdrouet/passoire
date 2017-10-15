@@ -1,5 +1,7 @@
 const {expect} = require('chai');
-const Schema = require('../source');
+const {Cleaner, Schema} = require('../source');
+
+const cleaner = new Cleaner();
 
 const Subthing = new Schema({
   id: {},
@@ -8,20 +10,24 @@ const Subthing = new Schema({
 const Thing = new Schema({
   id: {},
   data: {array: true, views: ['admin', 'public']},
-  subthing: {schema: Subthing, views: ['admin']},
-  subthings: {array: true, schema: Subthing, views: ['admin', 'public']},
+  subthing: {schema: 'subthing', views: ['admin']},
+  subthings: {array: true, schema: 'subthing', views: ['admin', 'public']},
 });
 
 const Account = new Schema({
   id: {},
   password: {views: []},
-  adminThings: {array: true, schema: Thing, views: ['admin']},
-  publicThings: {array: true, schema: Thing, views: ['admin', 'public']},
+  adminThings: {array: true, schema: 'thing', views: ['admin']},
+  publicThings: {array: true, schema: 'thing', views: ['admin', 'public']},
 });
+
+cleaner.register('account', Account);
+cleaner.register('thing', Thing);
+cleaner.register('subthing', Subthing);
 
 describe('clean', () => {
   it('should keep everything', () => {
-    expect(Account.clean({
+    expect(cleaner.clean('account', {
       id: 1,
       password: 'password',
       adminThings: [
@@ -44,7 +50,7 @@ describe('clean', () => {
   });
 
   it('should keep everything from the public view', () => {
-    expect(Account.clean({
+    expect(cleaner.clean('account', {
       id: 1,
       password: 'password',
       publicThings: [{id: 4}, {id: 5}],
@@ -58,7 +64,7 @@ describe('clean', () => {
   });
 
   it('should work with an array', () => {
-    expect(Account.clean([
+    expect(cleaner.clean('account', [
       {
         id: 1,
         password: 'password',

@@ -1,5 +1,7 @@
 
-const Schema = require('./source');
+const {Cleaner, Schema} = require('./source');
+
+const cleaner = new Cleaner();
 
 const Tag = new Schema({
   id: {},
@@ -12,7 +14,7 @@ const Account = new Schema({
   firstName: {views: ['public', 'user', 'admin']},
   lastName: {views: ['user', 'admin']},
   email: {views: ['user', 'admin']},
-  tags: {array: true, schema: Tag, views: ['user', 'admin']},
+  tags: {array: true, schema: 'tag', views: ['user', 'admin']},
 });
 
 const account = {
@@ -27,7 +29,10 @@ const account = {
   ],
 };
 
+cleaner.register('account', Account);
+cleaner.register('tag', Tag);
+
 // eslint-disable-next-line
-console.log(Account.clean(account));
+console.log(cleaner.clean('account', account));
 // eslint-disable-next-line
-console.log(Account.clean(account, 'public'));
+console.log(cleaner.clean('account', account, 'public'));
