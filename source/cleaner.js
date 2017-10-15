@@ -1,3 +1,5 @@
+const Schema = require('./schema');
+
 /**
  * class reprensenting a schema manager
  */
@@ -15,7 +17,11 @@ class Cleaner {
    * @param {Schema} schema - schema to register
    */
   register(name, schema) {
-    this.schemas.set(name, schema);
+    if (schema instanceof Schema) {
+      this.schemas.set(name, schema);
+    } else {
+      this.schemas.set(name, new Schema(schema));
+    }
   }
 
   /**
@@ -27,6 +33,7 @@ class Cleaner {
    */
   clean(schemaName, input, view) {
     const schema = this.schemas.get(schemaName);
+    if (!schema) throw new Error(`cannot find schema ${schemaName}`);
     if (Array.isArray(input)) {
       return input.map((item) => schema.clean(this, item, view));
     }
