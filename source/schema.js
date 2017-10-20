@@ -46,6 +46,7 @@ class Schema {
    * @return {Object} the cleaned object
    */
   clean(cleaner, input, view) {
+    if (!input) return null;
     return Object.keys(this.definition).reduce((result, key) => {
       const field = this.definition[key];
       const canSeeField = !view || !field.views || field.views.includes(view);

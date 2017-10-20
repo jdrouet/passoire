@@ -70,6 +70,27 @@ describe('clean', () => {
     });
   });
 
+  it('should put an empty array when the array is missing', () => {
+    expect(cleaner.clean('account', [
+      {
+        id: 1,
+        name: 'Joe',
+        password: 'password',
+        publicThings: null,
+      },
+    ], 'public')).to.eql([
+      {
+        id: 1,
+        name: 'Joe Joe',
+        publicThings: [],
+      },
+    ]);
+  });
+
+  it('should handle a null', () => {
+    expect(cleaner.clean('account', null, 'public')).to.eql(null);
+  });
+
   it('should work with an array', () => {
     expect(cleaner.clean('account', [
       {
