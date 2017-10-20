@@ -31,6 +31,9 @@ class Schema {
     if (field.schema) {
       return {[key]: cleaner.clean(field.schema, value, view)};
     }
+    if (field.transform) {
+      return {[key]: field.transform(value)};
+    }
     return {[key]: value};
   }
 

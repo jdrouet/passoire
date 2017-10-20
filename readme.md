@@ -19,7 +19,10 @@ const Tag = new Schema({
 const Account = new Schema({
   id: {},
   password: {views: []},
-  firstName: {views: ['public', 'user', 'admin']},
+  firstName: {
+    views: ['public', 'user', 'admin'],
+    transform: (value) => value.toLowerCase(),
+  },
   lastName: {views: ['user', 'admin']},
   email: {views: ['user', 'admin']},
   tags: {array: true, schema: 'tag', views: ['user', 'admin']},
@@ -50,9 +53,9 @@ Will output
 ```node
 { id: 1,
   password: 'such a funny password',
-  firstName: 'Jean',
+  firstName: 'jean',
   lastName: 'Luc',
   email: 'jean-luc@gmail.com',
   tags: [ { id: 1, label: 'french' }, { id: 2, label: 'rider' } ] }
-{ id: 1, firstName: 'Jean' }
+{ id: 1, firstName: 'jean' }
 ```

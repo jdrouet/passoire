@@ -16,6 +16,9 @@ const Thing = new Schema({
 
 const Account = new Schema({
   id: {},
+  name: {
+    transform: (value) => `Joe ${value}`,
+  },
   password: {views: []},
   adminThings: {array: true, schema: 'thing', views: ['admin']},
   publicThings: {array: true, schema: 'thing', views: ['admin', 'public']},
@@ -29,6 +32,7 @@ describe('clean', () => {
   it('should keep everything', () => {
     expect(cleaner.clean('account', {
       id: 1,
+      name: 'robert',
       password: 'password',
       adminThings: [
         {id: 2, data: ['toto'], subthing: {id: 6}},
@@ -37,6 +41,7 @@ describe('clean', () => {
       publicThings: [{id: 4, subthings: [{id: 7}]}, {id: 5}],
     })).to.eql({
       id: 1,
+      name: 'Joe robert',
       password: 'password',
       adminThings: [
         {id: 2, data: ['toto'], subthing: {id: 6}, subthings: []},
@@ -52,10 +57,12 @@ describe('clean', () => {
   it('should keep everything from the public view', () => {
     expect(cleaner.clean('account', {
       id: 1,
+      name: 'Joe',
       password: 'password',
       publicThings: [{id: 4}, {id: 5}],
     }, 'public')).to.eql({
       id: 1,
+      name: 'Joe Joe',
       publicThings: [
         {id: 4, data: [], subthings: []},
         {id: 5, data: [], subthings: []},
@@ -67,17 +74,20 @@ describe('clean', () => {
     expect(cleaner.clean('account', [
       {
         id: 1,
+        name: 'robert',
         password: 'password',
         publicThings: [{id: 4}, {id: 5}],
       },
       {
         id: 2,
+        name: 'albert',
         password: 'password',
         publicThings: [{id: 6}, {id: 7}],
       },
     ], 'public')).to.eql([
       {
         id: 1,
+        name: 'Joe robert',
         publicThings: [
           {id: 4, data: [], subthings: []},
           {id: 5, data: [], subthings: []},
@@ -85,6 +95,7 @@ describe('clean', () => {
       },
       {
         id: 2,
+        name: 'Joe albert',
         publicThings: [
           {id: 6, data: [], subthings: []},
           {id: 7, data: [], subthings: []},
